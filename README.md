@@ -1,3 +1,3 @@
 Hii this is Suprince
 <br>
-A aspiring Data Scientist
+A aspiring Data Scientist and engineer
