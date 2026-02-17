@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorful Day Predictor</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Black', sans-serif;
+            background: linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc, #ffcc00);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #loader-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .rainbow-ring {
+            width: 80px;
+            height: 80px;
+            border: 8px solid transparent;
+            border-top: 8px solid #ff00cc;
+            border-right: 8px solid #00ffcc;
+            border-bottom: 8px solid #ffcc00;
+            border-left: 8px solid #3333ff;
+            border-radius: 50%;
+            animation: spin 0.5s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            text-align: center;
+            border: 5px solid white;
+            width: 350px;
+        }
+
+        input {
+            width: 90%;
+            padding: 15px;
+            border-radius: 20px;
+            border: 3px solid #fff;
+            font-size: 1.5rem;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            color: #fff;
+            outline: none;
+            margin-bottom: 20px;
+        }
+
+        button#predict-btn {
+            background: #000;
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 50px;
+            border: 2px solid white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        button#predict-btn:hover {
+            background: white;
+            color: #000;
+            transform: translateY(-3px);
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .day-btn {
+            padding: 15px 5px;
+            border: 2px solid rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.4);
+            color: white;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .highlight {
+            background: #fff !important;
+            color: #ff00cc !important;
+            transform: scale(1.15);
+            box-shadow: 0 0 25px #fff;
+            border-color: #fff !important;
+        }
+
+        #status-text {
+            color: white;
+            margin-top: 15px;
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader-overlay">
+        <div class="rainbow-ring"></div>
+        <div id="status-text">CALCULATING...</div>
+    </div>
+
+    <div class="container">
+        <h1 style="color: white; text-shadow: 3px 3px #000; margin-top: 0;">PREDICTOR</h1>
+        
+        <input type="number" id="daysInput" placeholder="N Days" autofocus>
+        <button id="predict-btn" onclick="startPrediction()">PREDICT</button>
+
+        <div class="days-grid">
+            <div class="day-btn" id="day-0">SUN</div>
+            <div class="day-btn" id="day-1">MON</div>
+            <div class="day-btn" id="day-2">TUE</div>
+            <div class="day-btn" id="day-3">WED</div>
+            <div class="day-btn" id="day-4">THU</div>
+            <div class="day-btn" id="day-5">FRI</div>
+            <div class="day-btn" id="day-6">SAT</div>
+        </div>
+    </div>
+
+    <script>
+        function startPrediction() {
+            const input = document.getElementById('daysInput');
+            const n = parseInt(input.value);
+            const loader = document.getElementById('loader-overlay');
+
+            if (isNaN(n)) {
+                alert("Please enter a number!");
+                return;
+            }
+
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('highlight'));
+            
+            loader.style.display = 'flex';
+
+            setTimeout(() => {
+                loader.style.display = 'none';
+                
+                const today = new Date().getDay();
+                let futureIndex = (today + n) % 7;
+                
+                if (futureIndex < 0) futureIndex += 7;
+                
+                document.getElementById(`day-${futureIndex}`).classList.add('highlight');
+            }, 1000); 
+        }
+
+        document.getElementById("daysInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                startPrediction();
+            }
+        });
+    </script>
+</body>
+</html>
